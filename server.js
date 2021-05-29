@@ -17,18 +17,18 @@ app.use(express.urlencoded({ extended: true }));
 // need to use the router method
 const toDoRouter = express.Router();
 
+// directs all eligible reqeusts to the static folder on our machine (eligible = ending in .js)
+// instead of throwing a 404 when a request cant be processed in the static folder, it will invoke next() and continue through the rest of this server script
+app.use(express.static('static'));
+
+// route handler for the route index.html file
 app.get('/', (req, res) => {
-  console.log(path.join(__dirname, '/index.html'));
+  console.log(path.resolve(__dirname, 'index.html'));
   // leverage path.resolve to create an absolute path that will send the index.html file to the client regardless of the machine running this code
-  res.sendFile(path.join(__dirname, '/index.html'));
+  res.sendFile(path.resolve(__dirname, 'index.html'));
 })
 
 app.use('/toDo', toDoRouter);
-
-app.use('/index.js', (req, res) => {
-  res.sendFile(path.join(__dirname, '/index.js'))
-})
-
 // make first endpoint handler
 // get request to find data
 app.get('/find', controller.findToDo, (req, res) => {
@@ -41,7 +41,12 @@ app.post('/', controller.createToDo, (req, res) => {
   res.status(200).json(res.locals.result);
 })
 
-// global error handler
+// error handler for 404
+app.use((req, res) => {
+  // this code should catch any requests that do not have a corresponding endpoint in the above script
+})
+
+// global error handler - will only run when an err was detected in this code (i.e. if(err) evaluated to truthy)
 
 // make the server listen
 app.listen(3000, () => console.log('server listening on port 3000'));
