@@ -24,13 +24,14 @@ controller.findToDo = (req, res, next) => {
 // cretae a middleware to handle post requests to '/'
 controller.createToDo = (req, res, next) => {
   // create a variable toDo by pulling the toDo property from the req.body sending a request to the database
-  console.log(req.body);
+  console.log('adding new tasks to the database: ', req.body);
 
   const { toDo } = req.body;
   // post the todo to the database. use the create method on mongoose
   Task.create({task: toDo})
   .then(result => {
     res.locals.result = result;
+    console.log(result);
     return next();
   })
   .catch(err => {
